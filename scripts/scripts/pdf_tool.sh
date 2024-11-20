@@ -37,7 +37,7 @@ RESET='\033[0m'
        exit 1
     fi
 
-    echo "Found IPs on file $file_pdf:" > /home/$USER/Documents/PDF/"$file_txt" 
+    echo "Found IPs on file $file_pdf:" > /home/$USER/Documents/Scripts/PDF/"$file_txt" 
 
     # Convert PDF file to image .png
     pdftoppm "$file_pdf" temp_page -png
@@ -50,8 +50,8 @@ RESET='\033[0m'
     # check if Tesseract created the text file
     if [ -f temp_text.txt ]; then
             # Extract IPv4 and IPv6 to file txt 
-            grep -oP '\b(?:\d{1,3}\.){3}\d{1,3}\b' temp_text.txt >> /home/$USER/Documents/PDF/"$file_txt"  # IPv4
-            grep -oP '\b([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b' temp_text.txt >> /home/$USER/Documents/PDF/"$file_txt"  # IPv6
+            grep -oP '\b(?:\d{1,3}\.){3}\d{1,3}\b' temp_text.txt >> /home/$USER/Documents/Scripts/PDF/"$file_txt"  # IPv4
+            grep -oP '\b([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b' temp_text.txt >> /home/$USER/Documents/Scripts/PDF/"$file_txt"  # IPv6
             # Delete the temp file
             rm temp_text.txt
         fi
@@ -66,28 +66,33 @@ RESET='\033[0m'
 # Function to leave PDF file better
 # ─────────────────────────────────────────────────────────────────────────────
   better_quality_pdf() {
-    local file_pdf="$1"
-    local output_dir="/home/$USER/Documents/PDF/Optimized"
+        local file_pdf="$1"
+    local output_dir="/home/$USER/Documents/Scripts/PDF/Optimized"
     local optimized_pdf="optimized_pdf.pdf"
 
-    # Check if PDF file exist
+    # Verificar se o arquivo PDF existe
     if [ ! -f "$file_pdf" ]; then
-       echo "The file $file_pdf don't found!"
-       exit 1
+        echo "The file $file_pdf was not found!"
+        exit 1
     fi
-  
-    # Leave the PDF quality better
+
+    # Criar diretório de saída, se necessário
+    if [ ! -d "$output_dir" ]; then
+        mkdir -p "$output_dir"
+    fi
+
+    # Otimizar o PDF
     echo "Optimizing PDF to better quality..."
-    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$output_dir/optimized_pdf.pdf "$file_pdf"
-  
-    # Check if optized PDF was created
-    if pdfinfo "$optimized_pdf" > /dev/null 2>&1; then
-       echo "optimized PDF saved like $optimized_pdf"
+    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$output_dir/$optimized_pdf" "$file_pdf"
+
+    # Verificar se o PDF otimizado foi criado
+    if pdfinfo "$output_dir/$optimized_pdf" > /dev/null 2>&1; then
+        echo "Optimized PDF saved as $output_dir/$optimized_pdf"
     else
-       echo "Error to create optimized pdf!"
-       exit 1
+        echo "Error to create optimized pdf!"
+        exit 1
     fi
-  }
+}
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Message function
@@ -113,31 +118,31 @@ RESET='\033[0m'
       echo "Please, enter the name of PDF file: "
       read file_pdf
       msg 'Extracting IPs founded on PDF file...'
-      extract_ips_pdf /home/$USER/Documents/PDF/"$file_pdf"
+      extract_ips_pdf /home/$USER/Documents/Scripts/PDF/"$file_pdf"
   }
 
   better_pdf() {
       echo "Please, enter the name of PDF file: "
       read file_pdf
       msg 'Optimizing PDF file...'
-      better_quality_pdf /home/$USER/Documents/PDF/"$file_pdf"
+      better_quality_pdf /home/$USER/Documents/Scripts/PDF/"$file_pdf"
   }
 
   extract_ip_better_pdf() {
       echo "Please, enter the name of PDF file: "
       read file_pdf
       msg 'Optimizing PDF file...'
-      better_quality_pdf /home/$USER/Documents/PDF/"$file_pdf"
+      better_quality_pdf /home/$USER/Documents/Scripts/PDF/"$file_pdf"
       msg 'Extracting IPs founded on PDF file...'
-      extract_ips_pdf /home/$USER/Documents/PDF/"$file_pdf"
+      extract_ips_pdf /home/$USER/Documents/Scripts/PDF/"$file_pdf"
   }
   
   instructions() {
        echo 'Instructions for use: '
        echo
-       echo '1- The PDF files to be optimized must be in the directory /home/'$USER'/Documents/PDF'
-       echo '2- The optimized files will be in /home/'$USER'/Documents/PDF/Optimized'
-       echo '3- If the directory does not exist, you can create it using the command mkdir /home/'$USER'/Documents/PDF && /home/'$USER'/Documents/PDF/Optimized'
+       echo '1- The PDF files to be optimized must be in the directory /home/'$USER'/Documents/Scripts/PDF'
+       echo '2- The optimized files will be in /home/'$USER'/Documents/Scripts/PDF/Optimized'
+       echo '3- If the directory does not exist, you can create it using the command mkdir /home/'$USER'/Documents/Scripts && mkdir /home/'$USER'/Documents/Scripts/PDF && /home/'$USER'/Documents/Scripts/PDF/Optimized'
        echo
   }
 
