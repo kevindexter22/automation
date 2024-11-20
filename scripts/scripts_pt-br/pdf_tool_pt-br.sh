@@ -33,16 +33,16 @@ RESET='\033[0m'
 
     # Check if PDF exist
     if [ ! -f "$file_pdf" ]; then
-       echo "The file $file_pdf don't found!"
+       echo "O arquivo $file_pdf Não foi encontrado!"
        exit 1
     fi
 
-    echo "Found IPs on file $file_pdf:" > /home/$USER/Documentos/Scripts/PDF/"$file_txt" 
+    echo "Encontre os IPs no arquivo $file_pdf:" > /home/$USER/Documentos/Scripts/PDF/"$file_txt" 
 
     # Convert PDF file to image .png
     pdftoppm "$file_pdf" temp_page -png
     for img in temp_page-*.png; do
-       echo "Generating image: $img"
+       echo "Gerando imagem: $img"
 
     # Using Tresseract OCR to extract image
     tesseract "$img" temp_text -c preserve_interword_spaces=1
@@ -87,7 +87,7 @@ RESET='\033[0m'
 
     # Check if optimized file was created
     if pdfinfo "$output_dir/$optimized_pdf" > /dev/null 2>&1; then
-        echo "PDF otimizado foi salvo em $output_dir/$optimized_pdf"
+        echo "O PDF otimizado foi salvo em $output_dir/$optimized_pdf"
     else
         echo "Erro ao criar o arquivo otimizado!"
         exit 1
