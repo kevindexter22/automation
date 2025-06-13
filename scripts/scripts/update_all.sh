@@ -69,6 +69,11 @@ RESET='\033[0m'
        sudo apt --fix-broken install
        sudo rm -fr freedownloadmanager.deb
   }
+  unlock_apt_dpkg(){
+      sudo rm /var/lib/dpkg/lock
+      sudo rm /var/lib/apt/lists/lock
+      sudo dpkg --configure -a
+  }
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Restart function
@@ -150,15 +155,18 @@ RESET='\033[0m'
          read -p 'Enter your choice: ' choice
          case $choice in
          1)
+             unlock_apt_dpkg
              auto
              msg 'Updates applied successfully!'
              ask_reboot
              ;;
          2)
+             unlock_apt_dpkg
              repo_update
              msg 'Updates applied successfully!'
              ;;
          3)
+             unlock_apt_dpkg
              repo_update
              msg 'Updating applications...'
              upgrade
@@ -166,6 +174,7 @@ RESET='\033[0m'
              ask_reboot
              ;;
          4)
+             unlock_apt_dpkg
              repo_update
              msg 'Updating dependencies and applications...'
              dist_upgrade
@@ -183,11 +192,13 @@ RESET='\033[0m'
              ask_reboot
              ;;
          7)
+             unlock_apt_dpkg
              chrome_update
              msg 'Updates applied successfully!'
              ask_reboot
              ;;
          8)
+             unlock_apt_dpkg
              fdm_update
              msg 'Updates applied successfully!'
              ask_reboot
@@ -219,6 +230,7 @@ RESET='\033[0m'
         fdm_update
         msg 'Cleaning up...'
         cleanup
+        unlock_apt_dpkg
     }
 
 (return 2> /dev/null) || main
