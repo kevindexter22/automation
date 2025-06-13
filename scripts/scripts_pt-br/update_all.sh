@@ -70,6 +70,11 @@ RESET='\033[0m'
        sudo rm -fr freedownloadmanager.deb
   }
 
+   unlock_apt_dpkg(){
+      sudo rm /var/lib/dpkg/lock
+      sudo rm /var/lib/apt/lists/lock
+      sudo dpkg --configure -a
+  }
 # ─────────────────────────────────────────────────────────────────────────────
 # Restart function
 # ─────────────────────────────────────────────────────────────────────────────
@@ -150,15 +155,18 @@ RESET='\033[0m'
          read -p 'Digite sua opção: ' choice
          case $choice in
          1)
+             unlock_apt_dpkg
              auto
              msg 'Atualizações realizadas com sucesso!'
              ask_reboot
              ;;
          2)
+             unlock_apt_dpkg
              repo_update
              msg 'Atualizações realizadas com sucesso!'
              ;;
          3)
+             unlock_apt_dpkg
              repo_update
              msg 'Atualizando os pacotes...'
              upgrade
@@ -166,6 +174,7 @@ RESET='\033[0m'
              ask_reboot
              ;;
          4)
+             unlock_apt_dpkg
              repo_update
              msg 'Atualizando os pacotes e as dependências...'
              dist_upgrade
@@ -183,11 +192,13 @@ RESET='\033[0m'
              ask_reboot
              ;;
          7)
+             unlock_apt_dpkg
              chrome_update
              msg 'Atualizações realizadas com sucesso!'
              ask_reboot
              ;;
          8)
+             unlock_apt_dpkg
              fdm_update
              msg 'Atualizações realizadas com sucesso!'
              ask_reboot
@@ -219,6 +230,7 @@ RESET='\033[0m'
         fdm_update
         msg 'Limpando os caches...'
         cleanup
+        unlock_apt_dpkg
     }
 
 (return 2> /dev/null) || main
